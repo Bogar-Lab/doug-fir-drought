@@ -114,6 +114,38 @@ clean_annotations <- eggnog_data %>%
 # Verify the cleaned table
 clean_annotations
 ```
+let's try to add DGE results to this annotation table
 
+```{r}
+library(dplyr)
+library(tibble)
+
+# 1. Extract your edgeR topTags / exactTest / glmQLFTest results as a data frame
+# (Assuming 'res' is your edgeR topTags object or res$table)
+edger_df <- as.data.frame(topTags(trt.qlf, n = Inf)) %>%
+  rownames_to_column(var = "gene_id")
+
+# 2. Join the logFC and statistical metrics into your clean_annotations table
+annotated_degs <- clean_annotations %>%
+  inner_join(
+    edger_df %>% select(gene_id, logFC, logCPM, PValue, FDR),
+    by = "gene_id"
+  ) %>%
+  # Round statistical columns for clean viewing and export
+  mutate(
+    log2FC = round(logFC, 3),
+    logCPM = round(logCPM, 2),
+    FDR = signif(FDR, 3)
+  ) %>%
+  # Arrange by absolute fold change or FDR
+  arrange(FDR)
+
+# Preview the joined table with log2FC
+head(annotated_degs)
+```
+
+```{r}
+annotated_degs
+```
 
   
