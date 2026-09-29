@@ -17,6 +17,7 @@ git clone https://github.com/bklong/doug-fir-drought.git
 
 # Navigate into the directory
 cd doug-fir-drought
+\`\`\`
 
 
 ## Contributing
