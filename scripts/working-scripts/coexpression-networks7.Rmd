@@ -6,8 +6,127 @@ output: html_document
 ---
 
 
+this is a working script...trying to brainstorm how to start coexpression analysis
+
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+BiocManager::install(c("WGCNA", "edgeR", "ComplexHeatmap"))
+
+library(WGCNA)
+library(edgeR)
+# Recommended for multi-threading WGCNA math operations
+allowWGCNAThreads()
+```
 
 
+```{r}
+# A. Obtain logCPM matrix (genes in rows, samples in columns)
+logcpm <- cpm(dge.data, log = TRUE)
 
+# B. Select top 5,000 most variable genes across samples
+gene_vars <- apply(logcpm, 1, var)
+top_genes <- names(sort(gene_vars, decreasing = TRUE)[1:5000])
+filtered_matrix <- logcpm[top_genes, ]
+
+# C. Transpose matrix (samples as rows, genes as columns)
+datExpr <- t(filtered_matrix)
+
+# D. Check for excessive missing values or zero-variance genes
+gsg <- goodSamplesGenes(datExpr, verbose = 3)
+if (!gsg$allOK) {
+  datExpr <- datExpr[gsg$goodSamples, gsg$goodGenes]
+}
+```
+
+
+```{r}
+sampleTree <- hclust(dist(datExpr), method = "average")
+plot(sampleTree, main = "Sample Clustering to Detect Outliers", sub="", xlab="")
+```
+
+
+```{r}
+powers <- c(1:10, seq(12, 20, by = 2))
+sft <- pickSoftThreshold(datExpr, powerVector = powers, verbose = 5)
+
+# Plot Scale-Free Topology Fit Index vs Power
+plot(sft$fitIndices[, 1], -sign(sft$fitIndices[, 3]) * sft$fitIndices[, 2],
+     xlab = "Soft Threshold (power)", ylab = "Scale Free Topology Model Fit, signed R^2",
+     type = "n", main = "Scale Independence")
+text(sft$fitIndices[, 1], -sign(sft$fitIndices[, 3]) * sft$fitIndices[, 2],
+     labels = powers, col = "red")
+abline(h = 0.80, col = "blue") # Aim for the lowest power above this line
+```
+
+```{r}
+# Replace 'power = 6' with the value identified in Step 4
+net <- blockwiseModules(
+  datExpr,
+  power = 6,
+  TOMType = "unsigned",            # "signed" or "unsigned" network
+  minModuleSize = 30,              # Minimum genes per module
+  remergeCutHeight = 0.25,         # Merge modules that are >75% similar
+  numericLabels = TRUE,
+  pamRespectsDendro = FALSE,
+  saveTOMs = FALSE,
+  verbose = 3
+)
+
+# Convert numerical module IDs into color names
+moduleColors <- labels2colors(net$colors)
+
+# Plot the module dendrogram
+plotDendroAndColors(
+  net$dendrograms[[1]], 
+  moduleColors[net$blockGenes[[1]]],
+  "Module Colors",
+  dendroLabels = FALSE, 
+  hang = 0.03,
+  addGuide = TRUE, 
+  guideHang = 0.05
+)
+```
+
+
+```{r}
+# Convert group vector to numeric/binary design matrix
+traits <- model.matrix(~ 0 + dge.data$samples$group)
+colnames(traits) <- levels(dge.data$samples$group)
+
+# Recalculate Module Eigengenes
+MEs <- moduleEigengenes(datExpr, moduleColors)$eigengenes
+MEs <- orderMEs(MEs)
+
+# Calculate Pearson correlation between Module Eigengenes & sample traits
+moduleTraitCor <- cor(MEs, traits, use = "p")
+moduleTraitPvalue <- corPvalueStudent(moduleTraitCor, nSamples = nrow(datExpr))
+
+# Visualize with a Heatmap
+labeledHeatmap(
+  Matrix = moduleTraitCor,
+  xLabels = colnames(traits),
+  yLabels = names(MEs),
+  ySymbols = names(MEs),
+  colorLabels = FALSE,
+  colors = blueWhiteRed(50),
+  textMatrix = paste0(round(moduleTraitCor, 2), "\n(p = ", signif(moduleTraitPvalue, 1), ")"),
+  setStdMargins = FALSE,
+  cex.text = 0.7,
+  zlim = c(-1, 1),
+  main = "Module-Trait Relationships"
+)
+```
+
+```{r}
+# Calculate Module Membership (kME) for all genes
+geneModuleMembership <- as.data.frame(cor(datExpr, MEs, use = "p"))
+colnames(geneModuleMembership) <- paste0("kME_", names(MEs))
+
+# Extract top 10 hub genes in the lightyellow module
+lightyellow_kME <- geneModuleMembership[moduleColors == "lightyellow", "kME_MElightyellow", drop = FALSE]
+top_lightyellow_hubs <- head(lightyellow_kME[order(-lightyellow_kME$kME_MElightyellow), , drop = FALSE], 10)
+
+print(top_lightyellow_hubs)
+```
 
 
