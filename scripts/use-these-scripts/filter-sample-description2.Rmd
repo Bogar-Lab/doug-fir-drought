@@ -27,6 +27,7 @@ PM.counts.noid
 
 Create a data frame that describes the experiment.
 
+
 ```{r}
 library(tidyverse)
 sample.description <- tibble(sample=colnames(PM.counts.noid))
