@@ -26,10 +26,6 @@ dge.data <- calcNormFactors(dge.data, method = "TMM")
 dge.data$samples # look at the normalization factors
 ```
 
-(make ordination here)
-
-
-
 
 
 
