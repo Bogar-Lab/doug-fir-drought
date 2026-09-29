@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r}
-PM.counts <- read.table("Psme_RNASeq_July2024_Psme.1_0_counts.txt", header = TRUE) 
+PM.counts <- read.table("../../data/counts/Psme_RNASeq_July2024_Psme.1_0_counts.txt", header = TRUE) 
 PM.counts
 ```
 
@@ -23,7 +23,7 @@ PM.counts.noid
 
 ```{r}
 library(tidyverse)
-sample.description <- tibble(sample=colnames(TC.counts.noid))
+sample.description <- tibble(sample=colnames(PM.counts.noid))
 sample.description <- sample.description %>%
   mutate(
     myc = c("NM", "NM", "NM", "NM", "M", "NM", "M", "M", "M", "NM", "M", "NM", "NM", "M", "NM", "M", "NM", "NM", "NM", "M", "NA"),  
@@ -590,6 +590,16 @@ pheatmap(
 next: 
 fix heatmap5 file (make it coherent)
 make interpro script
+
+------------------------------------------------------
+
+Finish working on functional gene annotation script
+Make separate scripts more usable/flow better/add more notes
+
+Make a README?
+Coexpression networks? What data products are needed to go into the coexpression pipeline? Produce those results in “new results”
+Label the results effectively to make it interpretable 
+
 
 
 

@@ -5,7 +5,7 @@ date: "2026-09-17"
 output: html_document
 ---
 
-Let's try to brainstorm a way to annotate some of our DEGs.
+Let's annotate some of our DEGs.
 
 
 let's start with extracting protein sequences from genes of interest
@@ -16,6 +16,8 @@ library(Biostrings)
 # 1. Load the peptide FASTA file
 pep_seqs <- readAAStringSet("C:/Users/britt/Documents/R/BogarLab/data/Psme.1_0.pep.fa.gz")
 ```
+
+
 ```{r}
 library(dplyr)
 
@@ -44,37 +46,9 @@ writeXStringSet(selected_peps, "sig.trt.fasta")
 ```
 
 
-```{r}
-library(dplyr)
-
-# 1. Read Mercator text output
-mercator_raw <- read.delim(
-  "psme.results.txt",
-  header = TRUE,
-  sep = "\t",
-  comment.char = "#",
-  stringsAsFactors = FALSE
-)
-```
-
 
 ```{r}
-mercator_annot <- mercator_raw %>%
-  select(
-    gene_id = IDENTIFIER,
-    bin_code = BINCODE,
-    description = NAME
-  ) %>%
-  # Remove quotation marks if Mercator wrapped IDs in quotes
-  mutate(
-    gene_id = gsub("'", "", gene_id),
-    clean_label = paste0(description, " (", gene_id, ")")
-  )
 
-mercator_annot
-```
-
-```{r}
 library(dplyr)
 library(readr)
 
