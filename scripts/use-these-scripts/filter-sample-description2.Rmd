@@ -7,8 +7,10 @@ output: html_document
 
 Load and QC the RNAseq counts.
 
+assuming you are in the "use-these-scripts" directory:
+
 ```{r}
-PM.counts <- read.table("Psme_RNASeq_July2024_Psme.1_0_counts.txt", header = TRUE) 
+PM.counts <- read.table("../../data/counts/Psme_RNASeq_July2024_Psme.1_0_counts.txt", header = TRUE) 
 PM.counts
 ```
 
@@ -27,7 +29,7 @@ Create a data frame that describes the experiment.
 
 ```{r}
 library(tidyverse)
-sample.description <- tibble(sample=colnames(TC.counts.noid))
+sample.description <- tibble(sample=colnames(PM.counts.noid))
 sample.description <- sample.description %>%
   mutate(
     myc = c("NM", "NM", "NM", "NM", "M", "NM", "M", "M", "M", "NM", "M", "NM", "NM", "M", "NM", "M", "NM", "NM", "NM", "M", "NA"),  
