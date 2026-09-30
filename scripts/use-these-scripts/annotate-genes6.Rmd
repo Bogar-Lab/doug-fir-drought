@@ -31,7 +31,6 @@ length(target_gene_ids)
 
 
 
-
 ```{r}
 # 2. Filter for your target DEGs
 # (Ensure target_gene_ids matches the exact header format in names(pep_seqs))
