@@ -10,7 +10,9 @@ Load and QC the RNAseq counts.
 assuming you are in the "use-these-scripts" directory:
 
 ```{r}
-PM.counts <- read.table("../../data/counts/Psme_RNASeq_July2024_Psme.1_0_counts.txt", header = TRUE) 
+library(here)
+library(tidyverse)
+PM.counts <- read.table(here("data", "counts", "Psme_RNASeq_July2024_Psme.1_0_counts.txt"), header = TRUE) 
 PM.counts
 ```
 
@@ -22,7 +24,6 @@ PM.counts
 ```
 
 ```{r}
-library(tibble)
 PM.counts.noid <- as_tibble(PM.counts)
 PM.counts.noid
 ```
@@ -31,7 +32,6 @@ Create a data frame that describes the experiment.
 
 
 ```{r}
-library(tidyverse)
 sample.description <- tibble(sample=colnames(PM.counts.noid))
 sample.description <- sample.description %>%
   mutate(
