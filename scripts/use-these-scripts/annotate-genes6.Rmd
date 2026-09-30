@@ -125,7 +125,7 @@ annotated_degs
 ```{r}
 # Export dataframe to CSV
 # Note: row.names = FALSE prevents R from adding an extra column of 1,2,3... numbers
-write.csv(annotated_degs, file = "../../results/new-results/Annotated_DEGs.csv", row.names = FALSE)
+write.csv(annotated_degs, file = "../../results/new-results/trt_FDR0.01_Annotated_DEGs.csv", row.names = FALSE)
 ```
 
 
