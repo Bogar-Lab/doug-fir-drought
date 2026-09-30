@@ -10,6 +10,7 @@ Test the significance of experimental parameters for explaining gene expression.
 This tells us how many significant DEGs we have per condition:
 
 ```{r}
+# see notes for details on p.value selections
 summary(decideTests(myc.qlf, p.value=0.1))
 summary(decideTests(trt.qlf, p.value=0.01))
 summary(decideTests(interaction.qlf, p.value=0.5))

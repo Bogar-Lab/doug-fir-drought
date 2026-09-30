@@ -8,6 +8,13 @@ output: html_document
 let's start by getting ALL DEGs from the three treatments
 
 ```{r}
+library(here)
+library(edgeR)
+library(pheatmap)
+
+```
+
+```{r}
 all.myc.degs <- as.data.frame(topTags(myc.qlf, n = Inf))
 all.trt.degs <- as.data.frame(topTags(trt.qlf, n = Inf))
 all.int.degs <- as.data.frame(topTags(interaction.qlf, n = Inf))
@@ -115,7 +122,7 @@ pheatmap(
   clustering_distance_cols = "euclidean",
   clustering_method = "complete",
   main = "Myc DEGs > 0.1 FDR",
-   filename = "../../results/new-results/sig.myc.heatmap.pdf",  # Saved to new subfolder
+   filename = "results/new-results/sig.myc.heatmap.pdf",  # Saved to new subfolder
   width = 8,
   height = 10
 )
@@ -154,7 +161,7 @@ pheatmap(
   clustering_distance_cols = "euclidean",
   clustering_method = "complete",
   main = "Trt DEGs > 0.01 FDR",
-   filename = "../../results/new-results/sig.trt.heatmap.pdf",  # Saved to new subfolder
+   filename = "results/new-results/sig.trt.heatmap.pdf",  # Saved to new subfolder
   width = 8,
   height = 10
 )
@@ -190,7 +197,7 @@ pheatmap(
   clustering_distance_cols = "euclidean",
   clustering_method = "complete",
   main = "Myc DEGs > 1 logFC",
-   filename = "../../results/new-results/logFC.myc.heatmap.pdf",  # Saved to new subfolder
+   filename = "results/new-results/logFC.myc.heatmap.pdf",  # Saved to new subfolder
   width = 8,
   height = 10
 )

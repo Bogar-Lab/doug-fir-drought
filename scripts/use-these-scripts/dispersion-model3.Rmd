@@ -10,6 +10,7 @@ Determine the dispersion parameter (how over-dispersed is the data?)
 make a counts matrix:
 
 ```{r}
+
 library(edgeR)
 
 counts.matrix.PM <- PM.counts %>% as.matrix()

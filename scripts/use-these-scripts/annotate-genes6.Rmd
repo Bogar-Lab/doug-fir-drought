@@ -12,14 +12,14 @@ let's start with extracting protein sequences from genes of interest
 
 ```{r}
 library(Biostrings)
+library(tidyverse)
 
 # 1. Load the peptide FASTA file
-pep_seqs <- readAAStringSet("C:/Users/britt/Documents/R/BogarLab/data/Psme.1_0.pep.fa.gz")
+pep_seqs <- readAAStringSet("data/Psme.1_0.pep.fa.gz")
 ```
 
 
 ```{r}
-library(dplyr)
 
 # 2. Extract the gene IDs (row names)
 target_gene_ids <- rownames(sig.trt.degs)
@@ -44,16 +44,18 @@ selected_peps <- pep_seqs[names(pep_seqs) %in% target_gene_ids]
 writeXStringSet(selected_peps, "sig.trt.fasta")
 ```
 
+Eggnog PRODUCES the trt.emapper..annotations file below.
 
+EggNOG URL, if needed in future, is: eggnog-mapper.cgmlab.org/submit
 
 ```{r}
 
-library(dplyr)
-library(readr)
+# library(dplyr)
+# library(readr)
 
 # 1. Read the annotations file while filtering header metadata
 eggnog_data <- read_tsv(
-  "trt.emapper..annotations",
+  "scripts/working-scripts/trt.emapper..annotations",
   comment = "##",       # Skips double-hash header info
   col_names = TRUE      # Uses the single-hash header line for column names
 )
@@ -62,7 +64,7 @@ eggnog_data <- read_tsv(
 colnames(eggnog_data)[1] <- "query"
 
 # 3. Select the most useful columns for your RNA-seq project
-library(dplyr)
+# library(dplyr)
 
 # Extract and clean annotations matching your exact headers
 clean_annotations <- eggnog_data %>%
@@ -90,8 +92,6 @@ clean_annotations
 let's try to combine our DGE results with this eggNOG annotation table
 
 ```{r}
-library(dplyr)
-library(tibble)
 
 # 1. Extract your edgeR topTags / exactTest / glmQLFTest results as a data frame
 # (Assuming 'res' is your edgeR topTags object or res$table)
@@ -127,6 +127,6 @@ annotated_degs
 write.csv(annotated_degs, file = "../../results/new-results/trt_FDR0.01_Annotated_DEGs.csv", row.names = FALSE)
 ```
 
-
+Note: Brittany's more human-readable synthetic annotations (taking info from table above and interpreting biologically) are in the DFD folder on the Bogar Lab drive (Brittany's folder).
 
   

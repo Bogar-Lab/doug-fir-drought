@@ -8,10 +8,14 @@ output: html_document
 
 this is a working script...trying to brainstorm how to start coexpression analysis
 
-```{r}
-if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
-BiocManager::install(c("WGCNA", "edgeR", "ComplexHeatmap"))
+```{r New packages, skip if already installed}
 
+if (!requireNamespace("BiocManager", quietly = TRUE)) install.packages("BiocManager")
+BiocManager::install(c("WGCNA", "ComplexHeatmap"))
+
+```
+
+```{r}
 library(WGCNA)
 library(edgeR)
 # Recommended for multi-threading WGCNA math operations
