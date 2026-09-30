@@ -88,7 +88,7 @@ clean_annotations <- eggnog_data %>%
 # Verify the cleaned table
 clean_annotations
 ```
-let's try to add DGE results to this annotation table
+let's try to combine our DGE results with this eggNOG annotation table
 
 ```{r}
 library(dplyr)
